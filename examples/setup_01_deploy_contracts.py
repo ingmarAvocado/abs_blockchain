@@ -13,6 +13,7 @@ All operations are MOCKED for development.
 """
 
 import asyncio
+from abs_blockchain import ContractManager
 
 
 async def main():
@@ -29,6 +30,9 @@ async def main():
     print(f"🔗 Connected wallet: {browser_wallet}")
     print()
 
+    # Initialize contract manager
+    manager = ContractManager(owner_address=browser_wallet)
+
     # Step 1: Deploy HashRegistry contract
     print("1️⃣ DEPLOY HASH REGISTRY CONTRACT")
     print("-" * 50)
@@ -44,15 +48,27 @@ async def main():
     print("  Waiting for user to sign in browser...")
     print()
 
-    # MOCK deployment result
-    hash_registry_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
-    hash_registry_tx = "0x" + "a" * 64
+    # REAL METHOD CALL - will fail until implemented
+    try:
+        hash_registry_result = await manager.deploy_hash_registry()
+        hash_registry_address = hash_registry_result["contract_address"]
+        hash_registry_tx = hash_registry_result["transaction_hash"]
 
-    print(f"✅ HashRegistry deployed!")
-    print(f"   Contract: {hash_registry_address}")
-    print(f"   TX Hash: {hash_registry_tx}")
-    print(f"   Owner: {browser_wallet}")
-    print()
+        print(f"✅ HashRegistry deployed!")
+        print(f"   Contract: {hash_registry_address}")
+        print(f"   TX Hash: {hash_registry_tx}")
+        print(f"   Owner: {browser_wallet}")
+        print()
+    except NotImplementedError as e:
+        print(f"⚠️  Method not implemented yet: {e}")
+        print()
+        # Fallback to mock for demonstration
+        hash_registry_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        hash_registry_tx = "0x" + "a" * 64
+        print(f"   Using MOCK values for demonstration:")
+        print(f"   Contract: {hash_registry_address}")
+        print(f"   TX Hash: {hash_registry_tx}")
+        print()
 
     # Step 2: Deploy NFT contract
     print("2️⃣ DEPLOY NFT CONTRACT (ERC-721)")
@@ -72,17 +88,32 @@ async def main():
     print("  Waiting for user to sign in browser...")
     print()
 
-    # MOCK deployment result
-    nft_contract_address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-    nft_tx = "0x" + "b" * 64
+    # REAL METHOD CALL - will fail until implemented
+    try:
+        nft_result = await manager.deploy_nft_contract(
+            name="NotarizedDocument",
+            symbol="NOTARY"
+        )
+        nft_contract_address = nft_result["contract_address"]
+        nft_tx = nft_result["transaction_hash"]
 
-    print(f"✅ NFT Contract deployed!")
-    print(f"   Contract: {nft_contract_address}")
-    print(f"   TX Hash: {nft_tx}")
-    print(f"   Owner: {browser_wallet}")
-    print(f"   Name: NotarizedDocument")
-    print(f"   Symbol: NOTARY")
-    print()
+        print(f"✅ NFT Contract deployed!")
+        print(f"   Contract: {nft_contract_address}")
+        print(f"   TX Hash: {nft_tx}")
+        print(f"   Owner: {browser_wallet}")
+        print(f"   Name: {nft_result['name']}")
+        print(f"   Symbol: {nft_result['symbol']}")
+        print()
+    except NotImplementedError as e:
+        print(f"⚠️  Method not implemented yet: {e}")
+        print()
+        # Fallback to mock for demonstration
+        nft_contract_address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        nft_tx = "0x" + "b" * 64
+        print(f"   Using MOCK values for demonstration:")
+        print(f"   Contract: {nft_contract_address}")
+        print(f"   TX Hash: {nft_tx}")
+        print()
 
     # Step 3: Configuration
     print("3️⃣ UPDATE CONFIGURATION")

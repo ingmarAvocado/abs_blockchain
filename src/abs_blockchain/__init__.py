@@ -12,6 +12,7 @@ Replace with real implementations when ready for production.
 """
 
 from abs_blockchain.client import BlockchainClient
+from abs_blockchain.contract_manager import ContractManager
 from abs_blockchain.models import (
     NotarizationResult,
     NotarizationType,
@@ -24,6 +25,7 @@ __version__ = "0.1.0"
 
 __all__ = [
     "BlockchainClient",
+    "ContractManager",
     "NotarizationResult",
     "NotarizationType",
     "TransactionStatus",
