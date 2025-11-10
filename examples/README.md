@@ -6,7 +6,102 @@ Comprehensive examples demonstrating blockchain integration for abs_notary.
 
 These examples show the API interface that will be used by the real implementation.
 
-## 📋 Examples List
+## 🚀 Quick Start
+
+There are two types of examples:
+
+**Setup Examples** (One-time, by platform owner):
+- Deploy smart contracts with browser wallet
+- Authorize server wallet as notary
+- Create custodial wallets for users
+- Revoke/repudiate compromised keys
+
+**Usage Examples** (Ongoing operations):
+- Notarize documents with hash registry
+- Mint NFTs with Arweave storage
+- Complete workflows integrating with abs_orm
+
+## 📋 Setup Examples (One-Time)
+
+Run these in order when setting up the platform:
+
+### Setup 1: Deploy Smart Contracts (`setup_01_deploy_contracts.py`)
+**What it shows:**
+- Deploy HashRegistry contract (for simple notarizations)
+- Deploy NFT contract (ERC-721 for premium certificates)
+- Store contract addresses in configuration
+- Verify contracts on block explorer
+
+**Run it:**
+```bash
+poetry run python examples/setup_01_deploy_contracts.py
+```
+
+**Who runs this:** Platform owner with browser wallet (MetaMask, etc.)
+
+**When:** Once, during initial platform setup
+
+---
+
+### Setup 2: Authorize Server Wallet (`setup_02_authorize_server.py`)
+**What it shows:**
+- Configure server wallet (pays gas fees)
+- Grant NOTARY_ROLE on HashRegistry
+- Grant MINTER_ROLE on NFT contract
+- Verify authorizations
+- Test notarization
+
+**Run it:**
+```bash
+poetry run python examples/setup_02_authorize_server.py
+```
+
+**Who runs this:** Platform owner with browser wallet
+
+**When:** Once, after contract deployment
+
+---
+
+### Setup 3: Create User Wallets (`setup_03_create_user_wallets.py`)
+**What it shows:**
+- Custodial wallet architecture
+- Generate wallet for each user (linked to account/API key)
+- Store encrypted private keys in vault
+- Sign transactions on behalf of users
+- Security best practices
+
+**Run it:**
+```bash
+poetry run python examples/setup_03_create_user_wallets.py
+```
+
+**Who runs this:** Automated during user registration
+
+**When:** Every time a new user registers
+
+---
+
+### Setup 4: Revoke/Repudiate Keys (`setup_04_revoke_keys.py`)
+**What it shows:**
+- Revoke NOTARY_ROLE from compromised server wallet
+- Revoke MINTER_ROLE from compromised wallet
+- Deactivate user custodial wallets
+- Blacklist addresses from smart contracts
+- Emergency pause functionality
+- Audit trail for revocations
+
+**Run it:**
+```bash
+poetry run python examples/setup_04_revoke_keys.py
+```
+
+**Who runs this:** Platform owner with browser wallet
+
+**When:** Emergency situations, security incidents, or user account closures
+
+---
+
+## 📋 Usage Examples (Ongoing Operations)
 
 ### 1. Basic Hash Notarization (`01_basic_notarization.py`)
 **What it shows:**
