@@ -33,9 +33,16 @@ async def main():
     print()
 
     # Step 1: Server wallet
-    print("1️⃣ SERVER WALLET")
+    print("1️⃣ SERVER WALLET (Signs Everything)")
     print("-" * 50)
-    print("The server wallet pays gas fees for all notarizations (gasless service)")
+    print("The server wallet signs ALL user transactions and pays ALL gas fees.")
+    print()
+    print("Architecture:")
+    print("  - Single hot wallet running on server 24/7")
+    print("  - Signs notarization transactions for all users")
+    print("  - Users identified by document metadata (user_id in abs_orm)")
+    print("  - Users never interact with blockchain directly")
+    print("  - Fully gasless Web2 UX with Web3 proofs")
     print()
 
     server_wallet = "0x1111111111111111111111111111111111111111"
@@ -43,10 +50,11 @@ async def main():
     print()
     print("⚠️  SECURITY: Store private key in environment variable:")
     print("   BLOCKCHAIN_PRIVATE_KEY=0x...")
+    print("   Use AWS Secrets Manager or HashiCorp Vault for production")
     print()
     print("⚠️  FUNDING: This wallet needs ETH for gas fees:")
     print("   Recommended: 1-10 ETH depending on volume")
-    print("   Monitor balance and alert when low")
+    print("   Monitor balance and alert when low (<0.5 ETH)")
     print()
 
     # Step 2: Authorize on HashRegistry
@@ -132,14 +140,15 @@ async def main():
     print(f"  ✅ Test notarization successful")
     print()
     print("Next steps:")
-    print("1. Run setup_03_create_user_wallets.py to create custodial wallets")
-    print("2. Start the notarization service")
-    print("3. Monitor server wallet balance")
+    print("1. Start the notarization service (abs_worker)")
+    print("2. Monitor server wallet balance")
+    print("3. Review setup_03_revoke_keys.py for emergency procedures")
     print()
     print("⚠️  IMPORTANT:")
     print("- Server wallet private key must be kept secure")
-    print("- Use AWS KMS, HashiCorp Vault, or similar for production")
-    print("- Set up alerts for low balance")
+    print("- Use AWS Secrets Manager or HashiCorp Vault for production")
+    print("- Set up alerts for low balance (<0.5 ETH)")
+    print("- This wallet signs ALL transactions - protect it carefully")
     print("=" * 80)
 
 

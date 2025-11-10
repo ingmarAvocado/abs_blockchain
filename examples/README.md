@@ -62,37 +62,18 @@ poetry run python examples/setup_02_authorize_server.py
 
 ---
 
-### Setup 3: Create User Wallets (`setup_03_create_user_wallets.py`)
-**What it shows:**
-- Custodial wallet architecture
-- Generate wallet for each user (linked to account/API key)
-- Store encrypted private keys in vault
-- Sign transactions on behalf of users
-- Security best practices
-
-**Run it:**
-```bash
-poetry run python examples/setup_03_create_user_wallets.py
-```
-
-**Who runs this:** Automated during user registration
-
-**When:** Every time a new user registers
-
----
-
-### Setup 4: Revoke/Repudiate Keys (`setup_04_revoke_keys.py`)
+### Setup 3: Revoke/Repudiate Keys (`setup_03_revoke_keys.py`)
 **What it shows:**
 - Revoke NOTARY_ROLE from compromised server wallet
 - Revoke MINTER_ROLE from compromised wallet
-- Deactivate user custodial wallets
+- Block user accounts at application level (abs_orm)
 - Blacklist addresses from smart contracts
 - Emergency pause functionality
 - Audit trail for revocations
 
 **Run it:**
 ```bash
-poetry run python examples/setup_04_revoke_keys.py
+poetry run python examples/setup_03_revoke_keys.py
 ```
 
 **Who runs this:** Platform owner with browser wallet

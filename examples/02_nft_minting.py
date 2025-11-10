@@ -50,13 +50,16 @@ async def main():
 
     nft_metadata = {
         "name": "Notarized Document - Contract.pdf",
-        "description": "Official notarization of contract.pdf",
-        "image": arweave_result.arweave_url,
+        "description": "Official notarization certificate for contract.pdf",
+        "document": arweave_result.arweave_url,  # Link to actual document
+        "image": "https://abs-notary.com/assets/cert-preview.png",  # Certificate preview
+        "external_url": f"https://abs-notary.com/verify/{file_hash}",  # Verification page
         "attributes": [
             {"trait_type": "Document Type", "value": "Contract"},
             {"trait_type": "File Hash", "value": file_hash},
             {"trait_type": "Notarization Date", "value": "2024-11-10"},
             {"trait_type": "Storage", "value": "Arweave"},
+            {"trait_type": "Notary", "value": "abs_notary"},
         ],
     }
 

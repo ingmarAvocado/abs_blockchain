@@ -10,6 +10,20 @@ Mock blockchain integration for the abs_notary gasless notarization service. Pro
 
 **⚠️ Currently 100% MOCKED** - Returns fake data for development. Real Web3 integration to be implemented by developers.
 
+## Architecture: Two-Wallet Model
+
+**1. Browser Wallet (Owner)**
+- Deploys smart contracts (one-time)
+- Grants/revokes roles
+- Emergency controls
+- Kept offline when possible
+
+**2. Server Wallet (Notary)**
+- Signs ALL user transactions
+- Pays ALL gas fees (gasless service)
+- Hot wallet running 24/7
+- Users identified by metadata (user_id in abs_orm), not by wallet
+
 ## Core Concepts
 
 ### Gasless Service

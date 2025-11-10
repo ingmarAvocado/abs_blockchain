@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-SETUP EXAMPLE 4: Revoke/Repudiate Keys from Smart Contracts
+SETUP EXAMPLE 3: Revoke/Repudiate Keys from Smart Contracts
 
 This example demonstrates key revocation and repudiation:
-1. Revoke NOTARY_ROLE from compromised wallet
-2. Revoke MINTER_ROLE from compromised wallet
-3. Deactivate user custodial wallets
-4. Emergency stop functionality
+1. Revoke NOTARY_ROLE from compromised server wallet
+2. Revoke MINTER_ROLE from compromised server wallet
+3. Blacklist addresses from smart contracts
+4. Emergency pause functionality
 5. Audit trail for revocations
 
 IMPORTANT: Revocation is critical for security.
@@ -19,7 +19,7 @@ import asyncio
 
 async def main():
     print("=" * 80)
-    print("SETUP 4: REVOKE/REPUDIATE KEYS")
+    print("SETUP 3: REVOKE/REPUDIATE KEYS")
     print("=" * 80)
     print()
 
@@ -32,12 +32,16 @@ async def main():
     print("-" * 50)
     print()
     print("When to revoke:")
-    print("  1. Compromised private key")
-    print("  2. Employee termination")
-    print("  3. Security breach")
-    print("  4. User account closure")
-    print("  5. Suspicious activity")
-    print("  6. Platform shutdown")
+    print("  1. Server wallet private key compromised")
+    print("  2. Employee termination (had access to server wallet)")
+    print("  3. Security breach detected")
+    print("  4. Suspicious transaction activity")
+    print("  5. Platform shutdown or migration")
+    print()
+    print("Note: With two-wallet architecture:")
+    print("  - Browser wallet = Owner (you)")
+    print("  - Server wallet = Signs everything")
+    print("  - No per-user wallets to manage")
     print()
 
     # Scenario 1: Revoke server wallet
@@ -79,41 +83,45 @@ async def main():
 
     print("Step 4: Re-authorize new server wallet")
     print("  Run setup_02_authorize_server.py with new wallet")
+    print("  Update BLOCKCHAIN_PRIVATE_KEY environment variable")
     print()
 
-    # Scenario 2: Revoke user wallet
-    print("2️⃣ REVOKE USER WALLET")
+    # Scenario 2: Block user account
+    print("2️⃣ BLOCK USER ACCOUNT (Application Level)")
     print("-" * 50)
-    print("Scenario: User closes account or suspicious activity")
+    print("Scenario: Prevent specific user from creating new notarizations")
+    print()
+    print("Note: With two-wallet architecture, users don't have blockchain wallets.")
+    print("User blocking happens at APPLICATION level (abs_orm), not blockchain level.")
     print()
 
-    user_wallet = "0x2222222222222222222222222222222222222221"
     user_id = 42
     print(f"User ID: {user_id}")
-    print(f"User wallet: {user_wallet}")
     print()
 
-    print("Step 1: Deactivate wallet in database (abs_orm)")
+    print("Block user in database (abs_orm):")
     print()
     print("```python")
     print("async with get_session() as session:")
-    print("    wallet_repo = UserWalletRepository(session)")
-    print(f"    await wallet_repo.deactivate_wallet(user_id={user_id})")
+    print("    user_repo = UserRepository(session)")
+    print(f"    user = await user_repo.get({user_id})")
+    print("    user.is_active = False  # Disable account")
     print("    await session.commit()")
     print("```")
     print()
 
-    print("✅ User wallet deactivated!")
+    print("✅ User account blocked!")
     print()
 
-    print("Step 2: User's existing notarizations remain valid")
-    print("  - Historical records are immutable")
-    print("  - NFTs remain in blockchain")
-    print("  - Only future notarizations are blocked")
+    print("Effects:")
+    print("  - User cannot create new notarizations (app prevents it)")
+    print("  - Existing notarizations remain valid (immutable on blockchain)")
+    print("  - NFTs still exist and are transferable")
+    print("  - Server wallet continues working for other users")
     print()
 
     # Scenario 3: Blacklist addresses
-    print("3️⃣ BLACKLIST ADDRESSES (Smart Contract)")
+    print("3️⃣ BLACKLIST ADDRESSES (Smart Contract Level)")
     print("-" * 50)
     print("Scenario: Prevent specific addresses from notarizing")
     print()
