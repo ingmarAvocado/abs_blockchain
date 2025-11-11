@@ -16,7 +16,7 @@ import pytest
 import pytest_asyncio
 from typing import Dict, Set
 
-from src.abs_blockchain.contract_manager import ContractManager
+from abs_blockchain.contract_manager import ContractManager
 
 
 class TestContractManager:
