@@ -15,6 +15,7 @@ All operations are MOCKED for development.
 """
 
 import asyncio
+from abs_blockchain import ContractManager
 
 
 async def main():
@@ -54,15 +55,24 @@ async def main():
     print(f"⚠️  Compromised wallet: {compromised_server}")
     print()
 
+    # Initialize ContractManager
+    manager = ContractManager(owner_address=owner_wallet)
+
+    # First grant the roles (simulating they were previously granted)
+    print("Setting up initial state (granting roles)...")
+    await manager.grant_notary_role(hash_registry, compromised_server)
+    await manager.grant_minter_role(nft_contract, compromised_server)
+    print()
+
     print("Step 1: Revoke NOTARY_ROLE from HashRegistry")
     print(f"  HashRegistry.revokeRole(NOTARY_ROLE, {compromised_server})")
     print("  Waiting for browser wallet signature...")
     print()
 
-    # MOCK revocation
-    revoke_notary_tx = "0x" + "a" * 64
+    # REAL revocation using ContractManager
+    result = await manager.revoke_notary_role(hash_registry, compromised_server)
     print(f"✅ NOTARY_ROLE revoked!")
-    print(f"   TX Hash: {revoke_notary_tx}")
+    print(f"   TX Hash: {result['transaction_hash']}")
     print()
 
     print("Step 2: Revoke MINTER_ROLE from NFT Contract")
@@ -70,10 +80,10 @@ async def main():
     print("  Waiting for browser wallet signature...")
     print()
 
-    # MOCK revocation
-    revoke_minter_tx = "0x" + "b" * 64
+    # REAL revocation using ContractManager
+    result = await manager.revoke_minter_role(nft_contract, compromised_server)
     print(f"✅ MINTER_ROLE revoked!")
-    print(f"   TX Hash: {revoke_minter_tx}")
+    print(f"   TX Hash: {result['transaction_hash']}")
     print()
 
     print("Step 3: Generate new server wallet")
@@ -162,10 +172,10 @@ async def main():
     print("  Waiting for browser wallet signature...")
     print()
 
-    # MOCK pause
-    pause_hash_tx = "0x" + "d" * 64
+    # REAL pause using ContractManager
+    result = await manager.pause_contract(hash_registry)
     print(f"✅ HashRegistry paused!")
-    print(f"   TX Hash: {pause_hash_tx}")
+    print(f"   TX Hash: {result['transaction_hash']}")
     print()
 
     print("Pause NFT Contract:")
@@ -173,14 +183,26 @@ async def main():
     print("  Waiting for browser wallet signature...")
     print()
 
-    # MOCK pause
-    pause_nft_tx = "0x" + "e" * 64
+    # REAL pause using ContractManager
+    result = await manager.pause_contract(nft_contract)
     print(f"✅ NFT Contract paused!")
-    print(f"   TX Hash: {pause_nft_tx}")
+    print(f"   TX Hash: {result['transaction_hash']}")
     print()
 
     print("⚠️  All notarizations are now blocked")
     print("    Unpause when issue is resolved: contract.unpause()")
+    print()
+
+    # Demonstrate unpause
+    print("Step to unpause contracts:")
+    print("  - After security issue resolved")
+    print("  - Call unpause() on each contract")
+    print()
+
+    # REAL unpause using ContractManager
+    await manager.unpause_contract(hash_registry)
+    await manager.unpause_contract(nft_contract)
+    print("✅ Contracts unpaused and operational again")
     print()
 
     # Scenario 5: Audit trail

@@ -11,7 +11,8 @@ These operations are performed by the OWNER using a BROWSER WALLET
 (MetaMask, WalletConnect, etc.), not by the server.
 """
 
-from typing import Dict, Optional
+import asyncio
+from typing import Dict, Optional, Set
 
 
 class ContractManager:
@@ -30,6 +31,20 @@ class ContractManager:
             owner_address: Browser wallet address (will be contract owner)
         """
         self.owner_address = owner_address
+        # Mock state tracking
+        self._deployed_contracts: Dict[str, str] = {}
+        self._granted_roles: Dict[str, Set[str]] = {}
+        self._paused_contracts: Set[str] = set()
+        # Transaction counter for unique hashes (like BlockchainClient)
+        self._tx_counter: int = 0
+
+    def _generate_tx_hash(self, prefix: str = "c") -> str:
+        """Generate unique mock transaction hash using counter pattern."""
+        self._tx_counter += 1
+        # Pad counter to 3 digits, fill rest with prefix character
+        counter_hex = f"{self._tx_counter:03x}"
+        padding = prefix * (64 - len(counter_hex))
+        return f"0x{padding}{counter_hex}"
 
     async def deploy_hash_registry(self) -> Dict[str, str]:
         """
@@ -46,10 +61,27 @@ class ContractManager:
                 "contract_type": "HashRegistry"
             }
         """
-        raise NotImplementedError(
-            "deploy_hash_registry() must be implemented by developers. "
-            "This requires Web3.py contract deployment with browser wallet signing."
-        )
+        # TODO: Real implementation requires:
+        # - Web3.py contract deployment with browser wallet signing
+        # - Contract bytecode and ABI
+        # - Gas estimation and transaction signing
+
+        # Simulate network delay
+        await asyncio.sleep(0.15)
+
+        # Generate deterministic mock address
+        mock_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        mock_tx = self._generate_tx_hash("a")
+
+        # Track deployed contract
+        self._deployed_contracts["hash_registry"] = mock_address
+
+        return {
+            "contract_address": mock_address,
+            "transaction_hash": mock_tx,
+            "deployer": self.owner_address,
+            "contract_type": "HashRegistry"
+        }
 
     async def deploy_nft_contract(
         self,
@@ -75,10 +107,26 @@ class ContractManager:
                 "symbol": "..."
             }
         """
-        raise NotImplementedError(
-            "deploy_nft_contract() must be implemented by developers. "
-            "This requires Web3.py ERC-721 contract deployment with browser wallet signing."
-        )
+        # TODO: Real implementation requires:
+        # - Web3.py ERC-721 contract deployment with browser wallet signing
+        # - Contract bytecode and ABI
+        # - Gas estimation and transaction signing
+
+        await asyncio.sleep(0.2)
+
+        mock_address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        mock_tx = self._generate_tx_hash("b")
+
+        self._deployed_contracts["nft_contract"] = mock_address
+
+        return {
+            "contract_address": mock_address,
+            "transaction_hash": mock_tx,
+            "deployer": self.owner_address,
+            "contract_type": "NFT",
+            "name": name,
+            "symbol": symbol
+        }
 
     async def grant_notary_role(
         self,
@@ -103,10 +151,25 @@ class ContractManager:
                 "role": "NOTARY_ROLE"
             }
         """
-        raise NotImplementedError(
-            "grant_notary_role() must be implemented. "
-            "Call contract.grantRole(NOTARY_ROLE, notary_address) with browser wallet."
-        )
+        # TODO: Real implementation:
+        # - Call contract.grantRole(NOTARY_ROLE, notary_address) with browser wallet
+
+        await asyncio.sleep(0.1)
+
+        # Track role grant
+        key = f"{contract_address}:NOTARY_ROLE"
+        if key not in self._granted_roles:
+            self._granted_roles[key] = set()
+        self._granted_roles[key].add(notary_address)
+
+        mock_tx = self._generate_tx_hash("c")
+
+        return {
+            "transaction_hash": mock_tx,
+            "contract_address": contract_address,
+            "notary_address": notary_address,
+            "role": "NOTARY_ROLE"
+        }
 
     async def grant_minter_role(
         self,
@@ -131,10 +194,24 @@ class ContractManager:
                 "role": "MINTER_ROLE"
             }
         """
-        raise NotImplementedError(
-            "grant_minter_role() must be implemented. "
-            "Call contract.grantRole(MINTER_ROLE, minter_address) with browser wallet."
-        )
+        # TODO: Real implementation:
+        # - Call contract.grantRole(MINTER_ROLE, minter_address) with browser wallet
+
+        await asyncio.sleep(0.1)
+
+        key = f"{contract_address}:MINTER_ROLE"
+        if key not in self._granted_roles:
+            self._granted_roles[key] = set()
+        self._granted_roles[key].add(minter_address)
+
+        mock_tx = self._generate_tx_hash("d")
+
+        return {
+            "transaction_hash": mock_tx,
+            "contract_address": contract_address,
+            "minter_address": minter_address,
+            "role": "MINTER_ROLE"
+        }
 
     async def revoke_notary_role(
         self,
@@ -155,10 +232,22 @@ class ContractManager:
                 "role": "NOTARY_ROLE"
             }
         """
-        raise NotImplementedError(
-            "revoke_notary_role() must be implemented. "
-            "Call contract.revokeRole(NOTARY_ROLE, notary_address) with browser wallet."
-        )
+        # TODO: Real implementation:
+        # - Call contract.revokeRole(NOTARY_ROLE, notary_address) with browser wallet
+
+        await asyncio.sleep(0.1)
+
+        key = f"{contract_address}:NOTARY_ROLE"
+        if key in self._granted_roles:
+            self._granted_roles[key].discard(notary_address)
+
+        mock_tx = self._generate_tx_hash("e")
+
+        return {
+            "transaction_hash": mock_tx,
+            "revoked_address": notary_address,
+            "role": "NOTARY_ROLE"
+        }
 
     async def revoke_minter_role(
         self,
@@ -179,10 +268,22 @@ class ContractManager:
                 "role": "MINTER_ROLE"
             }
         """
-        raise NotImplementedError(
-            "revoke_minter_role() must be implemented. "
-            "Call contract.revokeRole(MINTER_ROLE, minter_address) with browser wallet."
-        )
+        # TODO: Real implementation:
+        # - Call contract.revokeRole(MINTER_ROLE, minter_address) with browser wallet
+
+        await asyncio.sleep(0.1)
+
+        key = f"{contract_address}:MINTER_ROLE"
+        if key in self._granted_roles:
+            self._granted_roles[key].discard(minter_address)
+
+        mock_tx = self._generate_tx_hash("f")
+
+        return {
+            "transaction_hash": mock_tx,
+            "revoked_address": minter_address,
+            "role": "MINTER_ROLE"
+        }
 
     async def pause_contract(self, contract_address: str) -> Dict[str, str]:
         """
@@ -198,10 +299,20 @@ class ContractManager:
                 "status": "paused"
             }
         """
-        raise NotImplementedError(
-            "pause_contract() must be implemented. "
-            "Call contract.pause() with browser wallet (requires OpenZeppelin Pausable)."
-        )
+        # TODO: Real implementation:
+        # - Call contract.pause() with browser wallet (requires OpenZeppelin Pausable)
+
+        await asyncio.sleep(0.1)
+
+        self._paused_contracts.add(contract_address)
+
+        mock_tx = self._generate_tx_hash("1")
+
+        return {
+            "transaction_hash": mock_tx,
+            "contract_address": contract_address,
+            "status": "paused"
+        }
 
     async def unpause_contract(self, contract_address: str) -> Dict[str, str]:
         """
@@ -217,10 +328,20 @@ class ContractManager:
                 "status": "active"
             }
         """
-        raise NotImplementedError(
-            "unpause_contract() must be implemented. "
-            "Call contract.unpause() with browser wallet."
-        )
+        # TODO: Real implementation:
+        # - Call contract.unpause() with browser wallet
+
+        await asyncio.sleep(0.1)
+
+        self._paused_contracts.discard(contract_address)
+
+        mock_tx = self._generate_tx_hash("2")
+
+        return {
+            "transaction_hash": mock_tx,
+            "contract_address": contract_address,
+            "status": "active"
+        }
 
     async def has_role(
         self,
@@ -239,7 +360,13 @@ class ContractManager:
         Returns:
             True if address has role, False otherwise
         """
-        raise NotImplementedError(
-            "has_role() must be implemented. "
-            "Call contract.hasRole(role, address) view function."
-        )
+        # TODO: Real implementation:
+        # - Call contract.hasRole(role, address) view function
+
+        await asyncio.sleep(0.05)
+
+        key = f"{contract_address}:{role_name}"
+        if key not in self._granted_roles:
+            return False
+
+        return address in self._granted_roles[key]
