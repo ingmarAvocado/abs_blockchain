@@ -13,6 +13,7 @@ All operations are MOCKED for development.
 """
 
 import asyncio
+from abs_blockchain import ContractManager
 
 
 async def main():
@@ -57,6 +58,9 @@ async def main():
     print("   Monitor balance and alert when low (<0.5 ETH)")
     print()
 
+    # Initialize ContractManager
+    manager = ContractManager(owner_address=owner_wallet)
+
     # Step 2: Authorize on HashRegistry
     print("2️⃣ GRANT NOTARY_ROLE (HashRegistry)")
     print("-" * 50)
@@ -68,13 +72,13 @@ async def main():
     print("Waiting for browser wallet signature...")
     print()
 
-    # MOCK authorization
-    auth_hash_tx = "0x" + "c" * 64
+    # REAL METHOD CALL using ContractManager
+    result = await manager.grant_notary_role(hash_registry, server_wallet)
 
     print(f"✅ NOTARY_ROLE granted!")
-    print(f"   TX Hash: {auth_hash_tx}")
-    print(f"   Authorized: {server_wallet}")
-    print(f"   Contract: {hash_registry}")
+    print(f"   TX Hash: {result['transaction_hash']}")
+    print(f"   Authorized: {result['notary_address']}")
+    print(f"   Contract: {result['contract_address']}")
     print()
 
     # Step 3: Authorize on NFT contract
@@ -88,13 +92,13 @@ async def main():
     print("Waiting for browser wallet signature...")
     print()
 
-    # MOCK authorization
-    auth_nft_tx = "0x" + "d" * 64
+    # REAL METHOD CALL using ContractManager
+    result = await manager.grant_minter_role(nft_contract, server_wallet)
 
     print(f"✅ MINTER_ROLE granted!")
-    print(f"   TX Hash: {auth_nft_tx}")
-    print(f"   Authorized: {server_wallet}")
-    print(f"   Contract: {nft_contract}")
+    print(f"   TX Hash: {result['transaction_hash']}")
+    print(f"   Authorized: {result['minter_address']}")
+    print(f"   Contract: {result['contract_address']}")
     print()
 
     # Step 4: Verify authorizations
@@ -103,9 +107,9 @@ async def main():
     print("Checking roles...")
     print()
 
-    # MOCK verification
-    has_notary_role = True
-    has_minter_role = True
+    # REAL verification using ContractManager
+    has_notary_role = await manager.has_role(hash_registry, "NOTARY_ROLE", server_wallet)
+    has_minter_role = await manager.has_role(nft_contract, "MINTER_ROLE", server_wallet)
 
     print(f"HashRegistry NOTARY_ROLE: {'✅ Authorized' if has_notary_role else '❌ Not authorized'}")
     print(f"NFT Contract MINTER_ROLE: {'✅ Authorized' if has_minter_role else '❌ Not authorized'}")
