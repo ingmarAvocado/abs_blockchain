@@ -1,6 +1,6 @@
 [project]
 name = "abs-blockchain"
-version = "0.1.0"
+version = "0.1.1"
 description = "Mock blockchain integration for abs_notary - gasless notarization service"
 authors = [
     {name = "ingmarAvocado"}

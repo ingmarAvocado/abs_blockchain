@@ -53,11 +53,19 @@ from abs_blockchain import BlockchainClient, NotarizationType
 
 client = BlockchainClient()
 
-# Hash registry
+# Hash registry (simple proof)
 result = await client.notarize_hash("0xABCD...")
 # Returns: NotarizationResult(tx_hash, block_number, gas_used)
 
-# NFT minting
+# NFT minting - RECOMMENDED (automatic Arweave upload)
+nft = await client.mint_nft_from_file(
+    file_path="/path/to/file",
+    file_hash="0xABCD...",
+    metadata={"name": "Document", "description": "..."}
+)
+# Returns: NotarizationResult(tx_hash, token_id, arweave_url)
+
+# NFT minting - ADVANCED (manual control)
 arweave = await client.upload_to_arweave("/path/to/file", "0xABCD...")
 nft = await client.mint_nft("0xABCD...", arweave.arweave_url, metadata)
 # Returns: NotarizationResult(tx_hash, token_id, arweave_url)
@@ -173,6 +181,29 @@ balance = await client.get_wallet_balance()  # 10.5 ETH
 ```python
 tasks = [client.notarize_hash(h) for h in hashes]
 results = await asyncio.gather(*tasks)
+```
+
+## NFT API: Which Method to Use?
+
+**Use `mint_nft_from_file()` (RECOMMENDED) when:**
+- Standard NFT workflow (most use cases)
+- You have the file path and want one-call simplicity
+- You don't need separate error handling for upload vs mint
+- You want clean, simple code
+
+**Use `upload_to_arweave()` + `mint_nft()` (ADVANCED) when:**
+- You already have an Arweave URL
+- You need separate error handling/retry logic
+- You want to mint multiple NFTs from same upload
+- You need custom upload behavior
+
+```python
+# RECOMMENDED: One-call simplicity
+result = await client.mint_nft_from_file(file_path, hash, metadata)
+
+# ADVANCED: Manual control
+arweave = await client.upload_to_arweave(file_path, hash)
+result = await client.mint_nft(hash, arweave.arweave_url, metadata)
 ```
 
 ## When to Use What

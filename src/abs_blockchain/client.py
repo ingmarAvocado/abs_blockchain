@@ -97,6 +97,37 @@ class BlockchainClient:
             timestamp=int(time.time()),
         )
 
+    async def mint_nft_from_file(
+        self,
+        file_path: str,
+        file_hash: str,
+        metadata: dict,
+    ) -> NotarizationResult:
+        """
+        MOCK: Convenience method - Upload to Arweave and mint NFT in one call
+
+        This is the recommended method for standard NFT minting workflows.
+        For advanced use cases (existing Arweave URLs, retry logic), use
+        upload_to_arweave() and mint_nft() separately.
+
+        Args:
+            file_path: Path to file to upload
+            file_hash: SHA-256 hash of file (0x-prefixed)
+            metadata: NFT metadata (name, description, attributes, etc.)
+
+        Returns:
+            NotarizationResult with NFT token ID and Arweave URL
+        """
+        # Step 1: Upload to Arweave
+        arweave_result = await self.upload_to_arweave(file_path, file_hash)
+
+        # Step 2: Mint NFT with Arweave URL
+        return await self.mint_nft(
+            file_hash=file_hash,
+            arweave_url=arweave_result.arweave_url,
+            metadata=metadata,
+        )
+
     async def upload_to_arweave(self, file_path: str, file_hash: str) -> ArweaveUploadResult:
         """
         MOCK: Upload file to Arweave permanent storage
